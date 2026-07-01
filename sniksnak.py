@@ -113,9 +113,9 @@ class Game:
         if vecu[0] == 0 and vecv[0] == 0:
             # moving down
             if vecu[1] == 1:
-                return pygame.transform.rotate(self.straight_img, 270)
+                return pygame.transform.rotate(self.straight_img, 90)
             # moving up
-            return pygame.transform.rotate(self.straight_img, 90)
+            return pygame.transform.rotate(self.straight_img, 270)
 
         # horizontal straight
         if vecu[1] == 0 and vecv[1] == 0:
@@ -164,11 +164,29 @@ class Game:
 
             if idx > 0:
                 x_prev, y_prev = self.snake.body[idx - 1]
-                vecu = (x - x_prev, y - y_prev)
+                dx = x - x_prev
+                dy = y - y_prev
+
+                # handle wrapping
+                if (dx > 1): dx = -1
+                elif (dx < -1): dx = 1
+                if (dy > 1): dy = -1
+                elif (dy < -1): dy = 1
+
+                vecu = (dx, dy)
 
             if idx < self.snake.body_len - 1:
                 x_next, y_next = self.snake.body[idx + 1]
-                vecv = (x_next - x, y_next - y)
+                dx = x_next - x
+                dy = y_next - y
+
+                # handle wrapping
+                if (dx > 1): dx = -1
+                elif (dx < -1): dx = 1
+                if (dy > 1): dy = -1
+                elif (dy < -1): dy = 1
+
+                vecv = (dx, dy)
             
             sprite = self.get_snake_sprite(vecu, vecv)
             
@@ -310,7 +328,7 @@ class Snake:
         head_x, head_y = self.body[0] # head
 
         new_head = ((head_x + self.direction[0]) % self.cols, 
-                    (head_y + self.direction[1]) % self.cols)
+                    (head_y + self.direction[1]) % self.rows)
 
         self.body = [new_head] + self.body
 
@@ -326,9 +344,9 @@ class Fruit:
         self.pos = pos
 
 
-COLS = 10
-ROWS = 10
-SQUARE_SIZE = 128
+COLS = 30
+ROWS = 20
+SQUARE_SIZE = 64
 
 game = Game(COLS, ROWS, SQUARE_SIZE)
 game.game_loop()
